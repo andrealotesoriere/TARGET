@@ -39,48 +39,69 @@
     <p>Punteggio: <span id="punteggio_display"></span></p>
 
     <script>
-        document.getElementById('circle_image').addEventListener('click', function(event) {
-            const img = event.target;
-            const rect = img.getBoundingClientRect();
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const clickX = event.clientX - rect.left;
-            const clickY = event.clientY - rect.top;
-            
-            const distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
-            const maxRadius = Math.min(rect.width, rect.height) / 2;
-            
-            const score = 10 - (10 * (distance / maxRadius));
-            
-            document.getElementById('punteggio_display').innerText = score.toFixed(2);
-            
-            function sendDataToRedcap(score) {
-                const api_url = 'INSERISCI_URL_API_DI_REDCAP';
-                const api_token = 'INSERISCI_TOKEN_API';
-                const data = new FormData();
-                data.append('token', api_token);
-                data.append('content', 'record');
-                data.append('format', 'json');
-                data.append('type', 'flat');
-                data.append('data', JSON.stringify([{
-                    'record_id': 'AUTO',
-                    'punteggio_cerchio': score.toFixed(2)
-                }]));
+      <script>
+    document.getElementById('circle_image').addEventListener('click', function(event) {
+        const img = event.target;
+        const rect = img.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const clickX = event.clientX - rect.left;
+        const clickY = event.clientY - rect.top;
+        
+        const distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
+        const maxRadius = Math.min(rect.width, rect.height) / 2;
+        
+        const score = 10 - (10 * (distance / maxRadius));
+        
+        document.getElementById('punteggio_display').innerText = score.toFixed(2);
+        
+        // --- Codice per il puntino ---
+        // Rimuove il puntino precedente se esiste
+        const oldDot = document.getElementById('click-dot');
+        if (oldDot) {
+            oldDot.remove();
+        }
+        
+        // Crea un nuovo elemento per il puntino
+        const dot = document.createElement('div');
+        dot.id = 'click-dot';
+        dot.style.position = 'absolute';
+        dot.style.width = '10px';
+        dot.style.height = '10px';
+        dot.style.backgroundColor = 'black';
+        dot.style.borderRadius = '50%';
+        dot.style.transform = 'translate(-50%, -50%)';
+        dot.style.top = `${clickY}px`;
+        dot.style.left = `${clickX}px`;
+        
+        // Aggiunge il puntino al contenitore dell'immagine
+        document.getElementById('circle_image_container').appendChild(dot);
+        // --- Fine codice per il puntino ---
 
-                fetch(api_url, {
-                    method: 'POST',
-                    body: data
-                })
-                .then(response => response.json())
-                .then(result => {
-                    console.log('Success:', result);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            }
-        });
-    </script>
-</body>
-</html>
+        function sendDataToRedcap(score) {
+            const api_url = 'INSERISCI_URL_API_DI_REDCAP';
+            const api_token = 'INSERISCI_TOKEN_API';
+            const data = new FormData();
+            data.append('token', api_token);
+            data.append('content', 'record');
+            data.append('format', 'json');
+            data.append('type', 'flat');
+            data.append('data', JSON.stringify([{
+                'record_id': 'AUTO',
+                'punteggio_cerchio': score.toFixed(2)
+            }]));
 
+            fetch(api_url, {
+                method: 'POST',
+                body: data
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    });
+</script>
