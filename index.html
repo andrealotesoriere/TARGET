@@ -20,6 +20,11 @@
             cursor: crosshair;
             max-width: 100%;
         }
+        #punteggio_display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #004d99;
+        }
     </style>
 </head>
 <body>
@@ -31,11 +36,7 @@
         <img src="target2.01.jpg" id="circle_image">
     </div>
 
-    #punteggio_display {
-    font-size: 2.5em; /* Aumenta la dimensione del testo */
-    font-weight: bold; /* Rende il testo in grassetto */
-    color: #004d99; /* Aggiunge un po' di colore (blu scuro) */
-}
+    <p>Punteggio: <span id="punteggio_display"></span></p>
 
     <script>
         document.getElementById('circle_image').addEventListener('click', function(event) {
