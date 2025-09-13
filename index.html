@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <title>Patient Reported Outcome</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #logo {
+            margin-top: 20px;
+            max-width: 300px;
+        }
         #circle_image_container {
             position: relative;
             display: inline-block;
@@ -15,6 +23,8 @@
     </style>
 </head>
 <body>
+
+    <img src="logo-target.png" id="logo" alt="Logo Target">
 
     <h1>Immagini che il centro del cerchio rappresenti il pieno raggiungimento del successo con la terapia. Clicchi sul punto del cerchio che meglio descrive quanto sente di aver raggiunto questo obiettivo con la terapia che sta attualmente assumendo. Più vicino al centro significa un maggior successo della terapia. </h1>
     <div id="circle_image_container">
@@ -56,7 +66,7 @@
             data.append('format', 'json');
             data.append('type', 'flat');
             data.append('data', JSON.stringify([{
-                'record_id': 'AUTO', // Oppure un ID specifico se lo hai
+                'record_id': 'AUTO',
                 'punteggio_cerchio': score.toFixed(2)
             }]));
 
