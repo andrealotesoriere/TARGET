@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Patient Reported Outcome</title>
+    <title>Scegli il tuo strumento</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,74 +12,36 @@
             margin-top: 20px;
             max-width: 300px;
         }
-        #circle_image_container {
-            position: relative;
+        .button-container {
+            margin-top: 50px;
+        }
+        .styled-button {
             display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            text-decoration: none;
+            color: white;
+            background-color: #6a1a7c;
+            border-radius: 8px;
+            margin: 10px;
+            cursor: pointer;
         }
-        #circle_image {
-            cursor: crosshair;
-            max-width: 100%;
-        }
-        #punteggio_display {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #004d99;
+        #ge-button {
+            background-color: #007bff;
         }
     </style>
 </head>
 <body>
 
-    <img src="logo-target.jpg" id="logo" alt="Logo Target">
+    <img src="logo-target.png" id="logo" alt="Logo Target">
 
-    <h1>Immagini che il centro del cerchio rappresenti il pieno raggiungimento del successo con la terapia. Clicchi sul punto del cerchio che meglio descrive quanto sente di aver raggiunto questo obiettivo con la terapia che sta attualmente assumendo. Più vicino al centro significa un maggior successo della terapia. </h1>
-    <div id="circle_image_container">
-        <img src="target2.01.jpg" id="circle_image">
+    <h1>Scegli lo strumento da utilizzare</h1>
+
+    <div class="button-container">
+        <a href="target-t2t.html" class="styled-button">Target for T2T</a>
+        <a href="target-ge.html" id="ge-button" class="styled-button">Target for GE</a>
     </div>
 
-    <p>Punteggio: <span id="punteggio_display"></span></p>
-
-    <script>
-        document.getElementById('circle_image').addEventListener('click', function(event) {
-            const img = event.target;
-            const rect = img.getBoundingClientRect();
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const clickX = event.clientX - rect.left;
-            const clickY = event.clientY - rect.top;
-            
-            const distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
-            const maxRadius = Math.min(rect.width, rect.height) / 2;
-            
-            const score = 10 - (10 * (distance / maxRadius));
-            
-            document.getElementById('punteggio_display').innerText = score.toFixed(2);
-            
-            function sendDataToRedcap(score) {
-                const api_url = 'INSERISCI_URL_API_DI_REDCAP';
-                const api_token = 'INSERISCI_TOKEN_API';
-                const data = new FormData();
-                data.append('token', api_token);
-                data.append('content', 'record');
-                data.append('format', 'json');
-                data.append('type', 'flat');
-                data.append('data', JSON.stringify([{
-                    'record_id': 'AUTO',
-                    'punteggio_cerchio': score.toFixed(2)
-                }]));
-
-                fetch(api_url, {
-                    method: 'POST',
-                    body: data
-                })
-                .then(response => response.json())
-                .then(result => {
-                    console.log('Success:', result);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            }
-        });
-    </script>
 </body>
 </html>
+
