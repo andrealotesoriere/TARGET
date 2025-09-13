@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Reported Outcome</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #logo {
+            margin-top: 20px;
+            max-width: 300px;
+        }
+        #circle_image_container {
+            position: relative;
+            display: inline-block;
+        }
+        #circle_image {
+            cursor: crosshair;
+            max-width: 100%;
+        }
+        #punteggio_display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #004d99;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="logo-target.png" id="logo" alt="Logo Target">
+
+    <h1>Immagini che il centro del cerchio rappresenti lei stesso. Clicchi il punto che meglio descrive quanto sente che la malattia ha influenzato la sua vita negli ultimi sette giorni. Più vicino al centro significa un maggiore impatto, più lontano un impatto minore. </h1>
+    <div id="circle_image_container">
+        <img src="target-ge.jpg" id="circle_image">
+    </div>
+
+    <p>Punteggio: <span id="punteggio_display"></span></p>
+
+    <script>
+        document.getElementById('circle_image').addEventListener('click', function(event) {
+            const img = event.target;
+            const rect = img.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+            
+            const distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
+            const maxRadius = Math.min(rect.width, rect.height) / 2;
+            
+            const score = 10 - (10 * (distance / maxRadius));
+            
+            document.getElementById('punteggio_display').innerText = score.toFixed(2);
+            
+            function sendDataToRedcap(score) {
+                const api_url = 'INSERISCI_URL_API_DI_REDCAP';
+                const api_token = 'INSERISCI_TOKEN_API';
+                const data = new FormData();
+                data.append('token', api_token);
+                data.append('content', 'record');
+                data.append('format', 'json');
+                data.append('type', 'flat');
+                data.append('data', JSON.stringify([{
+                    'record_id': 'AUTO',
+                    'punteggio_cerchio': score.toFixed(2)
+                }]));
+
+                fetch(api_url, {
+                    method: 'POST',
+                    body: data
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Success:', result);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
