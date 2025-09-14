@@ -46,33 +46,39 @@
 <head>
     <meta charset="UTF-8">
     <title>Scegli il tuo strumento</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        #logo {
-            margin-top: 20px;
-            max-width: 300px;
-        }
-        .button-container {
-            margin-top: 50px;
-        }
-        .styled-button {
-            display: inline-block;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            text-decoration: none;
-            color: white;
-            background-color: #6a1a7c;
-            border-radius: 8px;
-            margin: 10px;
-            cursor: pointer;
-        }
-        #ge-button {
-            background-color: #007bff;
-        }
-    </style>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    #logo {
+        margin-top: 20px;
+        max-width: 300px;
+    }
+    .button-container {
+        margin-top: 50px;
+    }
+    .styled-button {
+        display: inline-block;
+        padding: 15px 30px;
+        font-size: 1.2em;
+        text-decoration: none;
+        color: white;
+        background-color: #6a1a7c;
+        border-radius: 8px;
+        margin: 10px;
+        cursor: pointer;
+        /* Aggiungi questa linea per la transizione fluida */
+        transition: transform 0.3s ease; 
+    }
+    /* Aggiungi questo blocco per l'ingrandimento al passaggio del mouse */
+    .styled-button:hover {
+        transform: scale(1.05);
+    }
+    #ge-button {
+        background-color: #007bff;
+    }
+</style>
 </head>
  <hr>
     <p style="font-size: 0.8em; color: gray;">
