@@ -30,11 +30,12 @@
 <body>
 
     <img src="logo-target.jpg" id="logo" alt="Logo Target">
-<div style="text-align: centre; margin-top: 10px; margin-left: 20px;">
-    <a href="index.html" style="text-decoration: none; color: #004d99; font-size: 1.2em; font-weight: bold;">
-        < Indietro
-    </a>
-</div>
+    <div style="text-align: centre; margin-top: 10px; margin-left: 20px;">
+        <a href="index.html" style="text-decoration: none; color: #004d99; font-size: 1.2em; font-weight: bold;">
+            < Indietro
+        </a>
+    </div>
+    
     <h1>Immagini che il centro del cerchio rappresenti il pieno raggiungimento del successo con la terapia. Clicchi sul punto del cerchio che meglio descrive quanto sente di aver raggiunto questo obiettivo con la terapia che sta attualmente assumendo. Più vicino al centro significa un maggior successo della terapia. </h1>
     <div id="circle_image_container">
         <img src="target2.01.jpg" id="circle_image">
@@ -42,46 +43,75 @@
 
     <p>Punteggio: <span id="punteggio_display"></span></p>
 
+    <hr>
+    
+    <h2>Inserisci i tuoi dati</h2>
+    <div style="margin: 20px auto; max-width: 400px; text-align: left;">
+        <div style="margin-bottom: 10px;">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" required style="width: 100%;">
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label for="cognome">Cognome:</label>
+            <input type="text" id="cognome" required style="width: 100%;">
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label for="data_nascita">Data di Nascita:</label>
+            <input type="date" id="data_nascita" required style="width: 100%;">
+        </div>
+        <button id="invia_dati" style="padding: 10px 20px; font-size: 1em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">Invia dati al clinico</button>
+    </div>
+    
     <script>
-    document.getElementById('circle_image').addEventListener('click', function(event) {
-        const img = event.target;
-        const rect = img.getBoundingClientRect();
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const clickX = event.clientX - rect.left;
-        const clickY = event.clientY - rect.top;
-        
-        const distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
-        const maxRadius = Math.min(rect.width, rect.height) / 2;
-        
-        const score = 10 - (10 * (distance / maxRadius));
-        
-        document.getElementById('punteggio_display').innerText = score.toFixed(2);
-        
-        // --- Codice per il puntino ---
-        // Rimuove il puntino precedente se esiste
-        const oldDot = document.getElementById('click-dot');
-        if (oldDot) {
-            oldDot.remove();
-        }
-        
-        // Crea un nuovo elemento per il puntino
-        const dot = document.createElement('div');
-        dot.id = 'click-dot';
-        dot.style.position = 'absolute';
-        dot.style.width = '10px';
-        dot.style.height = '10px';
-        dot.style.backgroundColor = 'black';
-        dot.style.borderRadius = '50%';
-        dot.style.transform = 'translate(-50%, -50%)';
-        dot.style.top = `${clickY}px`;
-        dot.style.left = `${clickX}px`;
-        
-        // Aggiunge il puntino al contenitore dell'immagine
-        document.getElementById('circle_image_container').appendChild(dot);
-        // --- Fine codice per il puntino ---
+        let scoreValue = 0; // Variabile per memorizzare il punteggio
 
-        function sendDataToRedcap(score) {
+        document.getElementById('circle_image').addEventListener('click', function(event) {
+            const img = event.target;
+            const rect = img.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+            
+            const distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
+            const maxRadius = Math.min(rect.width, rect.height) / 2;
+            
+            scoreValue = 10 - (10 * (distance / maxRadius));
+            
+            document.getElementById('punteggio_display').innerText = scoreValue.toFixed(2);
+            
+            // --- Codice per il puntino ---
+            const oldDot = document.getElementById('click-dot');
+            if (oldDot) {
+                oldDot.remove();
+            }
+            const dot = document.createElement('div');
+            dot.id = 'click-dot';
+            dot.style.position = 'absolute';
+            dot.style.width = '10px';
+            dot.style.height = '10px';
+            dot.style.backgroundColor = 'black';
+            dot.style.borderRadius = '50%';
+            dot.style.transform = 'translate(-50%, -50%)';
+            dot.style.top = `${clickY}px`;
+            dot.style.left = `${clickX}px`;
+            document.getElementById('circle_image_container').appendChild(dot);
+            // --- Fine codice per il puntino ---
+        });
+
+        document.getElementById('invia_dati').addEventListener('click', function() {
+            const nome = document.getElementById('nome').value;
+            const cognome = document.getElementById('cognome').value;
+            const data_nascita = document.getElementById('data_nascita').value;
+
+            if (nome && cognome && data_nascita && scoreValue > 0) {
+                sendDataToRedcap(nome, cognome, data_nascita, scoreValue);
+            } else {
+                alert('Per favore, compila tutti i campi e clicca sul cerchio prima di inviare.');
+            }
+        });
+
+        function sendDataToRedcap(nome, cognome, data_nascita, score) {
             const api_url = 'INSERISCI_URL_API_DI_REDCAP';
             const api_token = 'INSERISCI_TOKEN_API';
             const data = new FormData();
@@ -91,7 +121,10 @@
             data.append('type', 'flat');
             data.append('data', JSON.stringify([{
                 'record_id': 'AUTO',
-                'punteggio_cerchio': score.toFixed(2)
+                'nome': nome,
+                'cognome': cognome,
+                'data_nascita': data_nascita,
+                'punteggio_t2t': score.toFixed(2) // Variabile per REDCap
             }]));
 
             fetch(api_url, {
@@ -101,14 +134,15 @@
             .then(response => response.json())
             .then(result => {
                 console.log('Success:', result);
+                alert('Dati inviati con successo!');
             })
             .catch(error => {
                 console.error('Error:', error);
+                alert('Errore nell\'invio dei dati.');
             });
         }
-    });
-</script>
- <hr>
+    </script>
+    <hr>
     <p style="font-size: 0.8em; color: gray;">
         Questo progetto è un'idea del Dott. Andrea Lotesoriere. 
         È attualmente in corso uno studio di validazione presso l'Università di Ferrara.
