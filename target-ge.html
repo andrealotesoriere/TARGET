@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Patient Reported Outcome</title>
+    <title>Patient Reported Outcome - GE</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,25 +45,14 @@
 
     <hr>
     
-    <h2>Inserisci i tuoi dati</h2>
-    <div style="margin: 20px auto; max-width: 400px; text-align: left;">
-        <div style="margin-bottom: 10px;">
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" required style="width: 100%;">
-        </div>
-        <div style="margin-bottom: 10px;">
-            <label for="cognome">Cognome:</label>
-            <input type="text" id="cognome" required style="width: 100%;">
-        </div>
-        <div style="margin-bottom: 10px;">
-            <label for="data_nascita">Data di Nascita:</label>
-            <input type="date" id="data_nascita" required style="width: 100%;">
-        </div>
-        <button id="invia_dati" style="padding: 10px 20px; font-size: 1em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">Invia dati al clinico</button>
-    </div>
+    <button id="invia_dati" style="padding: 10px 20px; font-size: 1em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; max-width: 400px;">Invia dati GE al clinico</button>
 
     <script>
-        let scoreValue = 0; // Variabile per memorizzare il punteggio
+        // Recupera l'ID del record dall'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const recordId = urlParams.get('record_id');
+
+        let scoreValue = 0;
 
         document.getElementById('circle_image').addEventListener('click', function(event) {
             const img = event.target;
@@ -72,19 +61,15 @@
             const centerY = rect.height / 2;
             const clickX = event.clientX - rect.left;
             const clickY = event.clientY - rect.top;
-            
+
             const distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
             const maxRadius = Math.min(rect.width, rect.height) / 2;
-            
+
             scoreValue = 10 - (10 * (distance / maxRadius));
-            
             document.getElementById('punteggio_display').innerText = scoreValue.toFixed(2);
-            
-            // --- Codice per il puntino ---
+
             const oldDot = document.getElementById('click-dot');
-            if (oldDot) {
-                oldDot.remove();
-            }
+            if (oldDot) oldDot.remove();
             const dot = document.createElement('div');
             dot.id = 'click-dot';
             dot.style.position = 'absolute';
@@ -96,22 +81,21 @@
             dot.style.top = `${clickY}px`;
             dot.style.left = `${clickX}px`;
             document.getElementById('circle_image_container').appendChild(dot);
-            // --- Fine codice per il puntino ---
         });
 
         document.getElementById('invia_dati').addEventListener('click', function() {
-            const nome = document.getElementById('nome').value;
-            const cognome = document.getElementById('cognome').value;
-            const data_nascita = document.getElementById('data_nascita').value;
-
-            if (nome && cognome && data_nascita && scoreValue > 0) {
-                sendDataToRedcap(nome, cognome, data_nascita, scoreValue);
+            if (scoreValue > 0) {
+                if (recordId) {
+                    sendDataToRedcap(recordId, scoreValue);
+                } else {
+                    alert('Errore: l\'ID del record non è stato trovato. Per favore, torna alla pagina precedente.');
+                }
             } else {
-                alert('Per favore, compila tutti i campi e clicca sul cerchio prima di inviare.');
+                alert('Per favore, clicca sul cerchio prima di inviare.');
             }
         });
 
-        function sendDataToRedcap(nome, cognome, data_nascita, score) {
+        function sendDataToRedcap(id, score) {
             const api_url = 'INSERISCI_URL_API_DI_REDCAP';
             const api_token = 'INSERISCI_TOKEN_API';
             const data = new FormData();
@@ -120,11 +104,8 @@
             data.append('format', 'json');
             data.append('type', 'flat');
             data.append('data', JSON.stringify([{
-                'record_id': 'AUTO',
-                'nome': nome,
-                'cognome': cognome,
-                'data_nascita': data_nascita,
-                'punteggio_ge': score.toFixed(2) // Variabile per REDCap
+                'record_id': id,
+                'punteggio_ge': score.toFixed(2)
             }]));
 
             fetch(api_url, {
@@ -148,6 +129,5 @@
         È attualmente in corso uno studio di validazione presso l'Università di Ferrara.
         Tutti i diritti riservati.
     </p>
-
 </body>
 </html>
