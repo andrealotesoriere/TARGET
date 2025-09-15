@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Patient Reported Outcome</title>
+    <title>Patient Reported Outcome - T2T</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,6 +25,15 @@
             font-weight: bold;
             color: #004d99;
         }
+        #thank_you_message {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #4CAF50;
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -35,7 +44,7 @@
             < Indietro
         </a>
     </div>
-    
+
     <h1>Immagini che il centro del cerchio rappresenti il pieno raggiungimento del successo con la terapia. Clicchi sul punto del cerchio che meglio descrive quanto sente di aver raggiunto questo obiettivo con la terapia che sta attualmente assumendo. Più vicino al centro significa un maggior successo della terapia. </h1>
     <div id="circle_image_container">
         <img src="target2.01.jpg" id="circle_image">
@@ -44,7 +53,7 @@
     <p>Punteggio: <span id="punteggio_display"></span></p>
 
     <hr>
-    
+
     <h2>Inserisci i tuoi dati</h2>
     <div style="margin: 20px auto; max-width: 400px; text-align: left;">
         <div style="margin-bottom: 10px;">
@@ -59,11 +68,17 @@
             <label for="data_nascita">Data di Nascita:</label>
             <input type="date" id="data_nascita" required style="width: 100%;">
         </div>
-        <button id="invia_dati" style="padding: 10px 20px; font-size: 1em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">Invia dati al clinico</button>
+        <button id="invia_dati" style="padding: 10px 20px; font-size: 1em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">Invia dati T2T al clinico</button>
     </div>
     
+    <div id="thank_you_message">
+        <p>Grazie per aver compilato il questionario. I tuoi dati sono stati salvati.</p>
+        <p>Ora, clicca qui per compilare il secondo questionario:</p>
+        <a href="#" id="next_link" style="color: #007bff; font-weight: bold;">Vai a Target for GE</a>
+    </div>
+
     <script>
-        let scoreValue = 0; // Variabile per memorizzare il punteggio
+        let scoreValue = 0;
 
         document.getElementById('circle_image').addEventListener('click', function(event) {
             const img = event.target;
@@ -72,19 +87,15 @@
             const centerY = rect.height / 2;
             const clickX = event.clientX - rect.left;
             const clickY = event.clientY - rect.top;
-            
+
             const distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
             const maxRadius = Math.min(rect.width, rect.height) / 2;
-            
+
             scoreValue = 10 - (10 * (distance / maxRadius));
-            
             document.getElementById('punteggio_display').innerText = scoreValue.toFixed(2);
-            
-            // --- Codice per il puntino ---
+
             const oldDot = document.getElementById('click-dot');
-            if (oldDot) {
-                oldDot.remove();
-            }
+            if (oldDot) oldDot.remove();
             const dot = document.createElement('div');
             dot.id = 'click-dot';
             dot.style.position = 'absolute';
@@ -96,7 +107,6 @@
             dot.style.top = `${clickY}px`;
             dot.style.left = `${clickX}px`;
             document.getElementById('circle_image_container').appendChild(dot);
-            // --- Fine codice per il puntino ---
         });
 
         document.getElementById('invia_dati').addEventListener('click', function() {
@@ -124,7 +134,7 @@
                 'nome': nome,
                 'cognome': cognome,
                 'data_nascita': data_nascita,
-                'punteggio_t2t': score.toFixed(2) // Variabile per REDCap
+                'punteggio_t2t': score.toFixed(2)
             }]));
 
             fetch(api_url, {
@@ -134,7 +144,15 @@
             .then(response => response.json())
             .then(result => {
                 console.log('Success:', result);
-                alert('Dati inviati con successo!');
+                if (result.count === 1) { // Verifica che un record sia stato creato
+                    const recordId = result.id;
+                    const nextLink = document.getElementById('next_link');
+                    nextLink.href = `target-ge.html?record_id=${recordId}`;
+                    document.getElementById('thank_you_message').style.display = 'block';
+                    document.getElementById('invia_dati').disabled = true;
+                } else {
+                    alert('Errore nella creazione del record su REDCap.');
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
