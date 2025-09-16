@@ -53,7 +53,7 @@
 <body>
 
     <img src="logo-target.jpg" id="logo" alt="Logo Target">
-    <div style="text-align: centre; margin-top: 10px; margin-left: 20px;">
+    <div style="text-align: center; margin-top: 10px; margin-left: 20px;">
         <a href="index.html" style="text-decoration: none; color: #004d99; font-size: 1.2em; font-weight: bold;">
             < Indietro
         </a>
@@ -68,9 +68,7 @@
 
     <hr>
     
-    <button id="invia_dati_ge" style="padding: 10px 20px; font-size: 1em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; max-width: 400px;">Invia dati GE al clinico</button>
-
-    <div id="likert_section" style="display:none; margin-top: 50px;">
+    <div id="likert_section" style="margin-top: 50px;">
         <h2>Valutazione del formato digitale</h2>
         <p>In una scala da 1 a 5, quanto ti è piaciuto il formato digitale di questi questionari?</p>
         <p>(1 = Per niente, 5 = Moltissimo)</p>
@@ -81,12 +79,9 @@
             <div class="likert-option" data-value="4">4</div>
             <div class="likert-option" data-value="5">5</div>
         </div>
-        <button id="invia_likert" style="margin-top: 20px; padding: 10px 20px; font-size: 1em; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; max-width: 400px;">Invia valutazione</button>
     </div>
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const recordId = urlParams.get('record_id');
 
+    <script>
         let scoreValue = 0;
         let likertScore = 0;
 
@@ -116,20 +111,7 @@
             dot.style.left = `${clickX}px`;
             document.getElementById('circle_image_container').appendChild(dot);
         });
-
-        document.getElementById('invia_dati_ge').addEventListener('click', function() {
-            if (scoreValue > 0) {
-                if (recordId) {
-                    sendDataToRedcap(recordId, scoreValue);
-                } else {
-                    alert('Errore: l\'ID del record non è stato trovato. Per favore, torna alla pagina precedente.');
-                }
-            } else {
-                alert('Per favore, clicca sul cerchio prima di inviare.');
-            }
-        });
         
-        // Logica per la scala Likert
         document.querySelectorAll('.likert-option').forEach(option => {
             option.addEventListener('click', function() {
                 document.querySelectorAll('.likert-option').forEach(opt => opt.classList.remove('selected'));
@@ -137,81 +119,10 @@
                 likertScore = this.getAttribute('data-value');
             });
         });
-
-        document.getElementById('invia_likert').addEventListener('click', function() {
-            if (likertScore > 0) {
-                if (recordId) {
-                    sendLikertDataToRedcap(recordId, likertScore);
-                } else {
-                    alert('Errore: l\'ID del record non è stato trovato. Per favore, torna alla pagina precedente.');
-                }
-            } else {
-                alert('Per favore, seleziona un punteggio prima di inviare.');
-            }
-        });
-        
-        function sendDataToRedcap(id, score) {
-            const api_url = 'https://redcap.ospfe.it/redcap_v14.5.20/API/';
-            const api_token = '45F6836488C93C92B59235B34407945F';
-            const data = new FormData();
-            data.append('token', api_token);
-            data.append('content', 'record');
-            data.append('format', 'json');
-            data.append('type', 'flat');
-            data.append('data', JSON.stringify([{
-                'record_id': id,
-                'punteggio_ge': score.toFixed(2)
-            }]));
-
-            fetch(api_url, {
-                method: 'POST',
-                body: data
-            })
-            .then(response => response.json())
-            .then(result => {
-                console.log('Success:', result);
-                alert('Dati inviati con successo!');
-                document.getElementById('likert_section').style.display = 'block';
-                document.getElementById('invia_dati_ge').disabled = true;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Errore nell\'invio dei dati.');
-            });
-        }
-        
-        function sendLikertDataToRedcap(id, score) {
-            const api_url = 'https://redcap.ospfe.it/redcap_v14.5.20/API/';
-            const api_token = '45F6836488C93C92B59235B34407945F';
-            const data = new FormData();
-            data.append('token', api_token);
-            data.append('content', 'record');
-            data.append('format', 'json');
-            data.append('type', 'flat');
-            data.append('data', JSON.stringify([{
-                'record_id': id,
-                'gradimento_digitale': score
-            }]));
-
-            fetch(api_url, {
-                method: 'POST',
-                body: data
-            })
-            .then(response => response.json())
-            .then(result => {
-                console.log('Success:', result);
-                alert('Grazie per la tua valutazione!');
-                document.getElementById('invia_likert').disabled = true;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Errore nell\'invio della valutazione.');
-            });
-        }
     </script>
     <hr>
     <p style="font-size: 0.8em; color: gray;">
-        Questo progetto è un'idea del Dott. Andrea Lotesoriere. 
+        Questo progetto è un'idea del Dott. Andrea Lotesoriere.
         È attualmente in corso uno studio di validazione presso l'Università di Ferrara.
         Tutti i diritti riservati.
     </p>
