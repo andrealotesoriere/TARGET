@@ -60,7 +60,7 @@
 <body>
 
     <img src="logo-target.jpg" id="logo" alt="Logo Target">
-    <div style="text-align: centre; margin-top: 10px; margin-left: 20px;">
+    <div style="text-align: center; margin-top: 10px; margin-left: 20px;">
         <a href="index.html" style="text-decoration: none; color: #004d99; font-size: 1.2em; font-weight: bold;">
             < Indietro
         </a>
@@ -68,7 +68,7 @@
 
     <div id="t2t_section">
         <h1>Immagini che il centro del cerchio rappresenti il pieno raggiungimento del successo con la terapia. Clicchi sul punto del cerchio che meglio descrive quanto sente di aver raggiunto questo obiettivo con la terapia che sta attualmente assumendo. Più vicino al centro significa un maggior successo della terapia. </h1>
-        <div id="circle_image_container">
+        <div id="circle_image_container_t2t">
             <img src="target2.01.jpg" id="circle_image_t2t">
         </div>
 
@@ -96,7 +96,7 @@
 
     <div id="ge_section">
         <h1>Immagini che il centro del cerchio rappresenti lei stesso. Clicchi il punto che meglio descrive quanto sente che la malattia ha influenzato la sua vita negli ultimi sette giorni. Più vicino al centro significa un maggiore impatto, più lontano un impatto minore. </h1>
-        <div id="circle_image_container">
+        <div id="circle_image_container_ge">
             <img src="target-ge.jpg" id="circle_image_ge">
         </div>
 
@@ -129,7 +129,6 @@
     </p>
 
     <script>
-        // Variabili globali per memorizzare i punteggi e l'ID del record
         let punteggioT2T = 0;
         let punteggioGE = 0;
         let punteggioLikert = 0;
@@ -150,10 +149,10 @@
             punteggioT2T = 10 - (10 * (distance / maxRadius));
             document.getElementById('punteggio_t2t_display').innerText = punteggioT2T.toFixed(2);
 
-            const oldDot = document.getElementById('click-dot-t2t');
+            const oldDot = document.getElementById('click-dot');
             if (oldDot) oldDot.remove();
             const dot = document.createElement('div');
-            dot.id = 'click-dot-t2t';
+            dot.id = 'click-dot';
             dot.style.position = 'absolute';
             dot.style.width = '10px';
             dot.style.height = '10px';
@@ -162,10 +161,9 @@
             dot.style.transform = 'translate(-50%, -50%)';
             dot.style.top = `${clickY}px`;
             dot.style.left = `${clickX}px`;
-            document.getElementById('circle_image_container').appendChild(dot);
+            document.getElementById('circle_image_container_t2t').appendChild(dot);
         });
 
-        // Invio dei dati T2T a REDCap
         document.getElementById('invia_t2t').addEventListener('click', function() {
             const nome = document.getElementById('nome').value;
             const cognome = document.getElementById('cognome').value;
@@ -202,9 +200,8 @@
             .then(result => {
                 console.log('Success:', result);
                 if (result.count === 1) { 
-                    recordId = result.id; // Salvo l'ID generato
+                    recordId = result.id;
                     alert('Dati T2T inviati con successo! Ora compila il prossimo questionario.');
-                    // Nascondi la sezione T2T e mostra la sezione GE
                     document.getElementById('t2t_section').style.display = 'none';
                     document.getElementById('ge_section').style.display = 'block';
                 } else {
@@ -244,13 +241,12 @@
             dot.style.transform = 'translate(-50%, -50%)';
             dot.style.top = `${clickY}px`;
             dot.style.left = `${clickX}px`;
-            document.getElementById('circle_image_container').appendChild(dot);
+            document.getElementById('circle_image_container_ge').appendChild(dot);
         });
 
-        // Invio dei dati GE a REDCap
         document.getElementById('invia_ge').addEventListener('click', function() {
             if (punteggioGE > 0) {
-                if (recordId) { // Uso l'ID salvato in precedenza
+                if (recordId) {
                     sendGEDataToRedcap(recordId, punteggioGE);
                 } else {
                     alert('Errore: l\'ID del record non è stato trovato. Si prega di ricominciare.');
@@ -299,7 +295,6 @@
             });
         });
 
-        // Invio dei dati Likert a REDCap
         document.getElementById('invia_likert').addEventListener('click', function() {
             if (punteggioLikert > 0) {
                 if (recordId) {
@@ -341,12 +336,6 @@
             });
         }
     </script>
-    <hr>
-    <p style="font-size: 0.8em; color: gray;">
-        Questo progetto è un'idea del Dott. Andrea Lotesoriere.
-        È attualmente in corso uno studio di validazione presso l'Università di Ferrara.
-        Tutti i diritti riservati.
-    </p>
 
 </body>
 </html>
