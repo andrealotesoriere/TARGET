@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Patient Reported Outcome - GE</title>
+    <title>Patient Reported Outcome - T2T</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,71 +25,30 @@
             font-weight: bold;
             color: #004d99;
         }
-        .likert-scale {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        .likert-option {
-            background-color: #f1f1f1;
-            padding: 10px 15px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2em;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .likert-option:hover {
-            background-color: #ddd;
-            transform: scale(1.1);
-        }
-        .likert-option.selected {
-            background-color: #007bff;
-            color: white;
-            transform: scale(1.1);
-        }
     </style>
 </head>
 <body>
 
     <img src="logo-target.jpg" id="logo" alt="Logo Target">
-    <div style="text-align: centre; margin-top: 10px; margin-left: 20px;">
+    <div style="text-align: center; margin-top: 10px; margin-left: 20px;">
         <a href="index.html" style="text-decoration: none; color: #004d99; font-size: 1.2em; font-weight: bold;">
             < Indietro
         </a>
     </div>
 
-    <h1>Immagini che il centro del cerchio rappresenti lei stesso. Clicchi il punto che meglio descrive quanto sente che la malattia ha influenzato la sua vita negli ultimi sette giorni. Più vicino al centro significa un maggiore impatto, più lontano un impatto minore. </h1>
+    <h1>Immagini che il centro del cerchio rappresenti il pieno raggiungimento del successo con la terapia. Clicchi sul punto del cerchio che meglio descrive quanto sente di aver raggiunto questo obiettivo con la terapia che sta attualmente assumendo. Più vicino al centro significa un maggior successo della terapia. </h1>
     <div id="circle_image_container">
-        <img src="target-ge.jpg" id="circle_image">
+        <img src="target2.01.jpg" id="circle_image">
     </div>
 
     <p>Punteggio: <span id="punteggio_display"></span></p>
 
     <hr>
     
-    <button id="invia_dati_ge" style="padding: 10px 20px; font-size: 1em; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; max-width: 400px;">Invia dati GE al clinico</button>
-
-    <div id="likert_section" style="display:none; margin-top: 50px;">
-        <h2>Valutazione del formato digitale</h2>
-        <p>In una scala da 1 a 5, quanto ti è piaciuto il formato digitale di questi questionari?</p>
-        <p>(1 = Per niente, 5 = Moltissimo)</p>
-        <div class="likert-scale">
-            <div class="likert-option" data-value="1">1</div>
-            <div class="likert-option" data-value="2">2</div>
-            <div class="likert-option" data-value="3">3</div>
-            <div class="likert-option" data-value="4">4</div>
-            <div class="likert-option" data-value="5">5</div>
-        </div>
-        <button id="invia_likert" style="margin-top: 20px; padding: 10px 20px; font-size: 1em; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; max-width: 400px;">Invia valutazione</button>
-    </div>
+    <a href="target-ge.html" style="text-decoration: none; color: #007bff; font-weight: bold; padding: 10px 20px; border: 2px solid #007bff; border-radius: 5px; display: inline-block;">Vai al questionario GE</a>
 
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const recordId = urlParams.get('record_id');
-
         let scoreValue = 0;
-        let likertScore = 0;
 
         document.getElementById('circle_image').addEventListener('click', function(event) {
             const img = event.target;
@@ -98,11 +57,13 @@
             const centerY = rect.height / 2;
             const clickX = event.clientX - rect.left;
             const clickY = event.clientY - rect.top;
+
             const distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
             const maxRadius = Math.min(rect.width, rect.height) / 2;
+
             scoreValue = 10 - (10 * (distance / maxRadius));
             document.getElementById('punteggio_display').innerText = scoreValue.toFixed(2);
-            
+
             const oldDot = document.getElementById('click-dot');
             if (oldDot) oldDot.remove();
             const dot = document.createElement('div');
@@ -117,97 +78,6 @@
             dot.style.left = `${clickX}px`;
             document.getElementById('circle_image_container').appendChild(dot);
         });
-
-        document.getElementById('invia_dati_ge').addEventListener('click', function() {
-            if (scoreValue > 0) {
-                if (recordId) {
-                    sendDataToRedcap(recordId, scoreValue);
-                } else {
-                    alert('Errore: l\'ID del record non è stato trovato. Per favore, torna alla pagina precedente.');
-                }
-            } else {
-                alert('Per favore, clicca sul cerchio prima di inviare.');
-            }
-        });
-        
-        document.querySelectorAll('.likert-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.likert-option').forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
-                likertScore = this.getAttribute('data-value');
-            });
-        });
-
-        document.getElementById('invia_likert').addEventListener('click', function() {
-            if (likertScore > 0) {
-                if (recordId) {
-                    sendLikertDataToRedcap(recordId, likertScore);
-                } else {
-                    alert('Errore: l\'ID del record non è stato trovato. Per favore, torna alla pagina precedente.');
-                }
-            } else {
-                alert('Per favore, seleziona un punteggio prima di inviare.');
-            }
-        });
-        
-        function sendDataToRedcap(id, score) {
-            const api_url = 'https://redcap.ospfe.it/redcap_v14.5.20/API/';
-            const api_token = '45F6836488C93C92B59235B34407945F';
-            const data = new FormData();
-            data.append('token', api_token);
-            data.append('content', 'record');
-            data.append('format', 'json');
-            data.append('type', 'flat');
-            data.append('data', JSON.stringify([{
-                'record_id': id,
-                'punteggio_ge': score.toFixed(2)
-            }]));
-
-            fetch(api_url, {
-                method: 'POST',
-                body: data
-            })
-            .then(response => response.json())
-            .then(result => {
-                console.log('Success:', result);
-                alert('Dati inviati con successo!');
-                document.getElementById('likert_section').style.display = 'block';
-                document.getElementById('invia_dati_ge').disabled = true;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Errore nell\'invio dei dati.');
-            });
-        }
-        
-        function sendLikertDataToRedcap(id, score) {
-            const api_url = 'https://redcap.ospfe.it/redcap_v14.5.20/API/';
-            const api_token = '45F6836488C93C92B59235B34407945F';
-            const data = new FormData();
-            data.append('token', api_token);
-            data.append('content', 'record');
-            data.append('format', 'json');
-            data.append('type', 'flat');
-            data.append('data', JSON.stringify([{
-                'record_id': id,
-                'gradimento_digitale': score
-            }]));
-
-            fetch(api_url, {
-                method: 'POST',
-                body: data
-            })
-            .then(response => response.json())
-            .then(result => {
-                console.log('Success:', result);
-                alert('Grazie per la tua valutazione!');
-                document.getElementById('invia_likert').disabled = true;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Errore nell\'invio della valutazione.');
-            });
-        }
     </script>
     <hr>
     <p style="font-size: 0.8em; color: gray;">
