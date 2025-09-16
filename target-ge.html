@@ -25,29 +25,6 @@
             font-weight: bold;
             color: #004d99;
         }
-        .likert-scale {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        .likert-option {
-            background-color: #f1f1f1;
-            padding: 10px 15px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2em;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .likert-option:hover {
-            background-color: #ddd;
-            transform: scale(1.1);
-        }
-        .likert-option.selected {
-            background-color: #007bff;
-            color: white;
-            transform: scale(1.1);
-        }
     </style>
 </head>
 <body>
@@ -68,22 +45,8 @@
 
     <hr>
     
-    <div id="likert_section" style="margin-top: 50px;">
-        <h2>Valutazione del formato digitale</h2>
-        <p>In una scala da 1 a 5, quanto ti è piaciuto il formato digitale di questi questionari?</p>
-        <p>(1 = Per niente, 5 = Moltissimo)</p>
-        <div class="likert-scale">
-            <div class="likert-option" data-value="1">1</div>
-            <div class="likert-option" data-value="2">2</div>
-            <div class="likert-option" data-value="3">3</div>
-            <div class="likert-option" data-value="4">4</div>
-            <div class="likert-option" data-value="5">5</div>
-        </div>
-    </div>
-
     <script>
         let scoreValue = 0;
-        let likertScore = 0;
 
         document.getElementById('circle_image').addEventListener('click', function(event) {
             const img = event.target;
@@ -110,14 +73,6 @@
             dot.style.top = `${clickY}px`;
             dot.style.left = `${clickX}px`;
             document.getElementById('circle_image_container').appendChild(dot);
-        });
-        
-        document.querySelectorAll('.likert-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.likert-option').forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
-                likertScore = this.getAttribute('data-value');
-            });
         });
     </script>
     <hr>
