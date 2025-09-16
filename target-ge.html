@@ -151,8 +151,8 @@
         });
         
         function sendDataToRedcap(id, score) {
-            const api_url = 'INSERISCI_URL_API_DI_REDCAP';
-            const api_token = 'INSERISCI_TOKEN_API';
+            const api_url = 'https://redcap.ospfe.it/redcap_v14.5.20/API/project_api.php?pid=279';
+            const api_token = '45F6836488C93C92B59235B34407945F';
             const data = new FormData();
             data.append('token', api_token);
             data.append('content', 'record');
