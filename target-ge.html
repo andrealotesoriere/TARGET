@@ -3,48 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <title>Patient Reported Outcome - GE</title>
+    <link rel="icon" type="image/png" href="logo-doppio-cerchio.png">
+    <link rel="apple-touch-icon" href="logo-doppio-cerchio.png">
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            margin: 0;
+            font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+            background: radial-gradient(circle at 50% 0%, #f6f1f8 0%, #eee7f1 45%, #e4dbe9 100%);
+            color: #2c2430;
             text-align: center;
+            padding: 30px 20px 50px;
         }
+
         #logo {
-            margin-top: 20px;
-            max-width: 300px;
+            margin-top: 10px;
+            max-width: 240px;
+            width: 100%;
+            filter: drop-shadow(0 6px 12px rgba(106, 26, 124, 0.15));
         }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 16px;
+            text-decoration: none;
+            color: #7c2690;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .instructions {
+            max-width: 720px;
+            margin: 36px auto 30px;
+            font-size: 1.1em;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #3d1f47;
+        }
+
         #circle_image_container {
             position: relative;
             display: inline-block;
         }
+
         #circle_image {
             cursor: crosshair;
             max-width: 100%;
         }
+
         #punteggio_display {
             font-size: 2.5em;
             font-weight: bold;
-            color: #004d99;
+            color: #5a1567;
+        }
+
+        .punteggio-row {
+            margin-top: 24px;
+            font-size: 1.1em;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #d9cfdd;
+            max-width: 720px;
+            margin: 36px auto;
+        }
+
+        .footer-text {
+            font-size: 0.8em;
+            color: #948a97;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
 
     <img src="logo-target.jpg" id="logo" alt="Logo Target">
-    <div style="text-align: center; margin-top: 10px; margin-left: 20px;">
-        <a href="index.html" style="text-decoration: none; color: #004d99; font-size: 1.2em; font-weight: bold;">
-            < Indietro
-        </a>
+    <div>
+        <a href="index.html" class="back-link">&lt; Indietro</a>
     </div>
 
-    <h1>Immagini che il centro del cerchio rappresenti lei stesso. Clicchi il punto che meglio descrive quanto sente che la malattia ha influenzato la sua vita negli ultimi sette giorni. Più vicino al centro significa un maggiore impatto, più lontano un impatto minore. </h1>
+    <p class="instructions">Immagini che il centro del cerchio rappresenti lei stesso. Clicchi il punto che meglio descrive quanto sente che la malattia ha influenzato la sua vita negli ultimi sette giorni. Più vicino al centro significa un maggiore impatto, più lontano un impatto minore.</p>
+
     <div id="circle_image_container">
         <img src="target-ge.jpg" id="circle_image">
     </div>
 
-    <p>Punteggio: <span id="punteggio_display"></span></p>
+    <p class="punteggio-row">Punteggio: <span id="punteggio_display"></span></p>
 
     <hr>
-    
+
     <script>
         let scoreValue = 0;
 
@@ -59,7 +110,7 @@
             const maxRadius = Math.min(rect.width, rect.height) / 2;
             scoreValue = 10 - (10 * (distance / maxRadius));
             document.getElementById('punteggio_display').innerText = scoreValue.toFixed(2);
-            
+
             const oldDot = document.getElementById('click-dot');
             if (oldDot) oldDot.remove();
             const dot = document.createElement('div');
@@ -75,10 +126,11 @@
             document.getElementById('circle_image_container').appendChild(dot);
         });
     </script>
+
     <hr>
-    <p style="font-size: 0.8em; color: gray;">
-        Questo progetto è un'idea del Dott. Andrea Lotesoriere.
-        È attualmente in corso uno studio di validazione presso l'Università di Ferrara.
+    <p class="footer-text">
+        Questo progetto è un'idea del Dott. Andrea Lotesoriere.<br>
+        È attualmente in corso uno studio di validazione presso l'Università di Ferrara.<br>
         Tutti i diritti riservati.
     </p>
 
