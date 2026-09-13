@@ -55,11 +55,38 @@
 
         .instructions {
             max-width: 720px;
-            margin: 36px auto 30px;
+            margin: 36px auto 20px;
             font-size: 1.1em;
             font-weight: 400;
             line-height: 1.5;
             color: #3d1f47;
+        }
+
+        .colorblind-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto 30px;
+            padding: 9px 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #7c2690;
+            background: white;
+            border: 1.5px solid #d5b8e0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.15s ease;
+        }
+
+        .colorblind-toggle:hover {
+            background: #f6ecfa;
+            transform: translateY(-1px);
+        }
+
+        .colorblind-toggle.active {
+            background: linear-gradient(135deg, #7c2690, #5a1567);
+            color: white;
+            border-color: transparent;
         }
 
         #circle_image_container {
@@ -137,6 +164,12 @@
 
     <p class="instructions">Immagini che il centro del cerchio rappresenti il pieno raggiungimento del successo con la terapia. Clicchi sul punto del cerchio che meglio descrive quanto sente di aver raggiunto questo obiettivo con la terapia che sta attualmente assumendo. Più vicino al centro significa un maggior successo della terapia.</p>
 
+    <div>
+        <button type="button" id="colorblind-toggle" class="colorblind-toggle" aria-pressed="false">
+            👁 Versione per daltonici
+        </button>
+    </div>
+
     <div id="circle_image_container">
         <img src="Target2.0_circle_soft-sections_def.png" id="circle_image">
     </div>
@@ -177,6 +210,28 @@
             dot.style.top = `${clickY}px`;
             dot.style.left = `${clickX}px`;
             document.getElementById('circle_image_container').appendChild(dot);
+        });
+
+        const NORMAL_IMAGE = 'Target2.0_circle_soft-sections_def.png';
+        const COLORBLIND_IMAGE = 'Target2.0_circle_colorblind-friendly_soft-sections.png';
+
+        const toggleButton = document.getElementById('colorblind-toggle');
+        const circleImage = document.getElementById('circle_image');
+
+        toggleButton.addEventListener('click', function () {
+            const isColorblind = circleImage.src.includes(COLORBLIND_IMAGE);
+
+            if (isColorblind) {
+                circleImage.src = NORMAL_IMAGE;
+                toggleButton.classList.remove('active');
+                toggleButton.setAttribute('aria-pressed', 'false');
+                toggleButton.innerHTML = '👁 Versione per daltonici';
+            } else {
+                circleImage.src = COLORBLIND_IMAGE;
+                toggleButton.classList.add('active');
+                toggleButton.setAttribute('aria-pressed', 'true');
+                toggleButton.innerHTML = '👁 Versione standard';
+            }
         });
     </script>
 
