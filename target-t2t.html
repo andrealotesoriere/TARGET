@@ -10,6 +10,24 @@
             box-sizing: border-box;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        html {
+            animation: fadeIn 0.35s ease;
+        }
+
+        html.fade-out {
+            animation: fadeOut 0.25s ease forwards;
+        }
+
         body {
             margin: 0;
             font-family: -apple-system, "Segoe UI", Arial, sans-serif;
@@ -168,6 +186,18 @@
         È attualmente in corso uno studio di validazione presso l'Università di Ferrara.<br>
         Tutti i diritti riservati.
     </p>
+    <script>
+        document.querySelectorAll('a[href$=".html"]').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const dest = this.getAttribute('href');
+                document.documentElement.classList.add('fade-out');
+                setTimeout(function () {
+                    window.location.href = dest;
+                }, 220);
+            });
+        });
+    </script>
 
 </body>
 </html>
