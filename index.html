@@ -10,6 +10,24 @@
             box-sizing: border-box;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        html {
+            animation: fadeIn 0.35s ease;
+        }
+
+        html.fade-out {
+            animation: fadeOut 0.25s ease forwards;
+        }
+
         body {
             margin: 0;
             min-height: 100vh;
@@ -88,7 +106,7 @@
 <body>
 
     <div class="card">
-        <img src="logo-doppio-cerchio.png" id="logo" alt="Logo Target">
+        <img src="logo-target.png" id="logo" alt="Logo Target">
 
         <h1>Seleziona il tuo ruolo</h1>
         <p class="subtitle">Accedi come medico o come paziente per continuare</p>
@@ -105,6 +123,19 @@
             Tutti i diritti riservati.
         </p>
     </div>
+
+    <script>
+        document.querySelectorAll('a[href$=".html"]').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const dest = this.getAttribute('href');
+                document.documentElement.classList.add('fade-out');
+                setTimeout(function () {
+                    window.location.href = dest;
+                }, 220);
+            });
+        });
+    </script>
 
 </body>
 </html>
